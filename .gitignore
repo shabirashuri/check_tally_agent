@@ -7,3 +7,4 @@ venv/
 uploads/
 logs/
 .env
+.env.local
