@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
-from pydantic.v1 import BaseModel, Field  # Use Pydantic v1 compatibility for langchain_core
+from pydantic import BaseModel, Field
 from typing import Optional
 
 
