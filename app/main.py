@@ -187,16 +187,3 @@ async def lifespan(app: FastAPI):
 
 # Note: Attach lifespan if using FastAPI 0.104+
 # app.router.lifespan_context = lifespan
-
-
-if __name__ == "__main__":
-    import uvicorn
-    
-    uvicorn.run(
-        "app.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=settings.DEBUG,
-        log_level="info"
-    )
-
