@@ -86,7 +86,7 @@ class CashedCheque(BaseModel):
     bank_cheque_number: str
     payee_name: str
     amount: float
-    issue_date: str
+    issue_date: Optional[str] = None  # Can be None if not extracted
     clearing_date: str
 
 
@@ -95,7 +95,7 @@ class UncashedCheque(BaseModel):
     cheque_number: str
     payee_name: str
     amount: float
-    issue_date: str
+    issue_date: Optional[str] = None  # Can be None if not extracted
     days_outstanding: int
 
 

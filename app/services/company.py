@@ -48,12 +48,14 @@ def process_company_expenses(
         
         # Store extracted cheques in database
         for cheque in extraction_result["cheques"]:
+            # Extract fields - Pydantic models can be accessed like dicts
+            # issue_date may be None if LLM couldn't extract it (now allowed by schema)
             company_expense = CompanyExpense(
                 session_id=session_id,
                 cheque_number=cheque["cheque_number"],
                 payee_name=cheque["payee_name"],
                 amount=cheque["amount"],
-                issue_date=cheque["issue_date"],
+                issue_date=cheque["issue_date"],  # Can be None - schema now allows it
                 raw_text=file_content
             )
             db.add(company_expense)

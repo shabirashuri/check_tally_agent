@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
-from pydantic import BaseModel, Field
-from typing import Optional
+from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import List, Optional
 
 
 load_dotenv()
@@ -30,7 +30,7 @@ class ExtractedCompanyCheque(BaseModel):
     cheque_number: str = Field(..., description="The cheque number")
     payee_name: str = Field(..., description="Name of payee/recipient")
     amount: float = Field(..., description="Amount of the cheque")
-    issue_date: str = Field(..., description="Date cheque was issued (YYYY-MM-DD)")
+    issue_date: Optional[str] = Field(None, description="Date cheque was issued (YYYY-MM-DD). Use None if date cannot be determined.")
 
 
 class ExtractedBankCheque(BaseModel):
@@ -42,13 +42,13 @@ class ExtractedBankCheque(BaseModel):
 
 class CompanyChequeExtractionResult(BaseModel):
     """Result of company cheque extraction"""
-    cheques: list[ExtractedCompanyCheque]
+    cheques: List[ExtractedCompanyCheque]
     extraction_notes: str = ""
 
 
 class BankChequeExtractionResult(BaseModel):
     """Result of bank cheque extraction"""
-    cheques: list[ExtractedBankCheque]
+    cheques: List[ExtractedBankCheque]
     extraction_notes: str = ""
 
 

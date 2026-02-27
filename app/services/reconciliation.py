@@ -4,7 +4,7 @@ Compares company-issued cheques with bank-cleared cheques
 """
 
 from datetime import datetime, timedelta
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 from app.schemas.bank_transactions import BankTransactionResponse
 from app.schemas.company_expence import CompanyExpenseResponse
 from app.schemas.cheque import CashedCheque, UncashedCheque, TallyReportResponse
@@ -16,16 +16,18 @@ import json
 from datetime import date
 
 
-def parse_date(date_str: str) -> date:
+def parse_date(date_str: Optional[str]) -> date:
     """
     Parse date string in various formats
     
     Args:
-        date_str: Date string (YYYY-MM-DD format preferred)
+        date_str: Date string (YYYY-MM-DD format preferred), can be None
         
     Returns:
-        parsed date object
+        parsed date object (today's date if None or parsing fails)
     """
+    if not date_str:
+        return datetime.now().date()
     try:
         return datetime.strptime(date_str, "%Y-%m-%d").date()
     except ValueError:
@@ -86,7 +88,7 @@ def reconcile_cheques(
                         bank_cheque_number=bank_txn.cheque_number,
                         payee_name=company_expense.payee_name,
                         amount=company_expense.amount,
-                        issue_date=company_expense.issue_date,
+                        issue_date=company_expense.issue_date or None,  # Handle None gracefully
                         clearing_date=bank_txn.clearing_date
                     )
                 )
@@ -98,7 +100,7 @@ def reconcile_cheques(
                         cheque_number=company_expense.cheque_number,
                         payee_name=company_expense.payee_name,
                         amount=company_expense.amount,
-                        issue_date=company_expense.issue_date,
+                        issue_date=company_expense.issue_date or None,  # Handle None gracefully
                         days_outstanding=calculate_days_outstanding(company_expense.issue_date)
                     )
                 )
@@ -110,7 +112,7 @@ def reconcile_cheques(
                     cheque_number=company_expense.cheque_number,
                     payee_name=company_expense.payee_name,
                     amount=company_expense.amount,
-                    issue_date=company_expense.issue_date,
+                    issue_date=company_expense.issue_date or None,  # Handle None gracefully
                     days_outstanding=calculate_days_outstanding(company_expense.issue_date)
                 )
             )
@@ -127,16 +129,18 @@ def reconcile_cheques(
     return cashed_cheques, uncashed_cheques, unmatched_info
 
 
-def calculate_days_outstanding(issue_date_str: str) -> int:
+def calculate_days_outstanding(issue_date_str: Optional[str]) -> int:
     """
     Calculate days outstanding for a cheque
     
     Args:
-        issue_date_str: Issue date as string
+        issue_date_str: Issue date as string (can be None)
         
     Returns:
-        Number of days since issue
+        Number of days since issue (0 if date is None or invalid)
     """
+    if not issue_date_str:
+        return 0
     try:
         issue_date = parse_date(issue_date_str)
         today = datetime.now().date()

@@ -8,7 +8,7 @@ class CompanyExpenseBase(BaseModel):
     cheque_number: str = Field(..., description="Cheque number")
     payee_name: str = Field(..., description="Person or company receiving payment")
     amount: float = Field(..., gt=0, description="Cheque amount")
-    issue_date: str = Field(..., description="Cheque issue date (YYYY-MM-DD)")
+    issue_date: Optional[str] = Field(None, description="Cheque issue date (YYYY-MM-DD)")
 
 
 class CompanyExpenseCreate(CompanyExpenseBase):
