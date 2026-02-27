@@ -62,7 +62,7 @@ Response:
 ### Create New Session
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/sessions/create \
+curl -X POST http://localhost:8000/sessions/create \
   -H "Authorization: Bearer {access_token}" \
   -H "Content-Type: application/json" \
   -d '{
@@ -84,14 +84,14 @@ Response:
 ### List All Sessions
 
 ```bash
-curl -X GET http://localhost:8000/api/v1/sessions \
+curl -X GET http://localhost:8000/sessions \
   -H "Authorization: Bearer {access_token}"
 ```
 
 ### Get Session Details
 
 ```bash
-curl -X GET http://localhost:8000/api/v1/sessions/{session_id} \
+curl -X GET http://localhost:8000/sessions/{session_id} \
   -H "Authorization: Bearer {access_token}"
 ```
 
@@ -103,8 +103,29 @@ Response:
   "user_id": "user-uuid",
   "session_name": "February 2026 Monthly Reconciliation",
   "created_at": "2026-02-24T16:20:48.421Z",
-  "company_expenses": [...],
-  "bank_transactions": [...]
+  "company_expenses": [
+    {
+      "id": 1,
+      "session_id": "session-uuid",
+      "cheque_number": "001",
+      "payee_name": "ABC Corp",
+      "amount": 50000.0,
+      "issue_date": "2026-02-01",
+      "created_at": "2026-02-24T16:25:10.123Z",
+      "raw_text": "Cheque #001..."
+    }
+  ],
+  "bank_transactions": [
+    {
+      "id": 1,
+      "session_id": "session-uuid",
+      "cheque_number": "001",
+      "amount": 50000.0,
+      "clearing_date": "2026-02-02",
+      "created_at": "2026-02-24T16:27:15.456Z",
+      "raw_text": "Cleared: #001..."
+    }
+  ]
 }
 ```
 
@@ -114,7 +135,7 @@ Response:
 
 ```bash
 # From file
-curl -X POST http://localhost:8000/api/v1/sessions/{session_id}/upload-company-expenses \
+curl -X POST http://localhost:8000/sessions/{session_id}/company/upload-expenses \
   -H "Authorization: Bearer {access_token}" \
   -F "file=@company_cheques.txt"
 
@@ -139,7 +160,7 @@ Date: 2026-02-05
 
 ```bash
 # From file
-curl -X POST http://localhost:8000/api/v1/sessions/{session_id}/upload-bank-transactions \
+curl -X POST http://localhost:8000/sessions/{session_id}/bank/upload-transactions \
   -H "Authorization: Bearer {access_token}" \
   -F "file=@bank_transactions.txt"
 ```
@@ -161,7 +182,7 @@ Date: 2026-02-04
 ### Run Tally (Reconciliation)
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/sessions/{session_id}/run-tally \
+curl -X POST http://localhost:8000/sessions/{session_id}/tally/run \
   -H "Authorization: Bearer {access_token}"
 ```
 
@@ -200,7 +221,7 @@ Response:
 ### Get Tally Report
 
 ```bash
-curl -X GET http://localhost:8000/api/v1/sessions/{session_id}/tally-report \
+curl -X GET http://localhost:8000/sessions/{session_id}/tally/report \
   -H "Authorization: Bearer {access_token}"
 ```
 
@@ -209,7 +230,7 @@ curl -X GET http://localhost:8000/api/v1/sessions/{session_id}/tally-report \
 ### 401 - Unauthorized (Missing Token)
 
 ```bash
-curl http://localhost:8000/api/v1/sessions
+curl http://localhost:8000/sessions
 ```
 
 Response:
@@ -223,7 +244,7 @@ Response:
 ### 404 - Session Not Found
 
 ```bash
-curl -X GET http://localhost:8000/api/v1/sessions/invalid-session-id \
+curl -X GET http://localhost:8000/sessions/invalid-session-id \
   -H "Authorization: Bearer {access_token}"
 ```
 
@@ -266,25 +287,25 @@ http POST localhost:8000/auth/login \
   password=password123
 
 # Create session
-http POST localhost:8000/api/v1/sessions/create \
+http POST localhost:8000/sessions/create \
   "Authorization: Bearer {token}" \
   session_name="My Session"
 
 # Upload file
-http -f POST localhost:8000/api/v1/sessions/{session_id}/upload-company-expenses \
+http -f POST localhost:8000/sessions/{session_id}/company/upload-expenses \
   "Authorization: Bearer {token}" \
   file@company_cheques.txt
 
 # Run tally
-http POST localhost:8000/api/v1/sessions/{session_id}/run-tally \
+http POST localhost:8000/sessions/{session_id}/tally/run \
   "Authorization: Bearer {token}"
 
 # Get report
-http localhost:8000/api/v1/sessions/{session_id}/tally-report \
+http localhost:8000/sessions/{session_id}/tally/report \
   "Authorization: Bearer {token}"
 ```
 
-## Using Python Requests
+## Using Python RequestsyyY
 
 ```python
 import requests
@@ -301,7 +322,7 @@ headers = {"Authorization": f"Bearer {token}"}
 
 # Create session
 response = requests.post(
-    f"{BASE_URL}/api/v1/sessions/create",
+    f"{BASE_URL}/sessions/create",
     headers=headers,
     json={"session_name": "My Session"}
 )
@@ -310,7 +331,7 @@ session_id = response.json()["id"]
 # Upload company expenses
 with open("company_cheques.txt", "rb") as f:
     response = requests.post(
-        f"{BASE_URL}/api/v1/sessions/{session_id}/upload-company-expenses",
+        f"{BASE_URL}/sessions/{session_id}/company/upload-expenses",
         headers=headers,
         files={"file": f}
     )
@@ -318,14 +339,14 @@ with open("company_cheques.txt", "rb") as f:
 # Upload bank transactions
 with open("bank_transactions.txt", "rb") as f:
     response = requests.post(
-        f"{BASE_URL}/api/v1/sessions/{session_id}/upload-bank-transactions",
+        f"{BASE_URL}/sessions/{session_id}/bank/upload-transactions",
         headers=headers,
         files={"file": f}
     )
 
 # Run tally
 response = requests.post(
-    f"{BASE_URL}/api/v1/sessions/{session_id}/run-tally",
+    f"{BASE_URL}/sessions/{session_id}/tally/run",
     headers=headers
 )
 tally = response.json()
