@@ -9,7 +9,7 @@ class BankTransaction(Base):
     __tablename__ = "bank_transactions"
 
     id = Column(Integer, primary_key=True, index=True)
-    session_id = Column(String, ForeignKey("sessions.id"))
+    session_id = Column(String, ForeignKey("sessions.id", ondelete="CASCADE"))
 
     cheque_number = Column(String, index=True)
     amount = Column(Float)

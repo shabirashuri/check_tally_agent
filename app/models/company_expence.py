@@ -9,7 +9,7 @@ class CompanyExpense(Base):
     __tablename__ = "company_expenses"
 
     id = Column(Integer, primary_key=True, index=True)
-    session_id = Column(String, ForeignKey("sessions.id"))
+    session_id = Column(String, ForeignKey("sessions.id", ondelete="CASCADE"))
 
     cheque_number = Column(String, index=True)
     payee_name = Column(String)

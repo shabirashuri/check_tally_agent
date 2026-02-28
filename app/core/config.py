@@ -21,11 +21,8 @@ class Settings(BaseSettings):
     # Supabase
     SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
     
-    # LLM
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-    LLM_MODEL: str = "mixtral-8x7b-32768"
-    LLM_TEMPERATURE: float = 0.0
-    LLM_MAX_TOKENS: int = 4000
+    # OpenAI
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     
     # Application
     DEBUG: bool = os.getenv("DEBUG", "False") == "True"

@@ -1,7 +1,7 @@
 import os
 import json
 from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
@@ -10,18 +10,11 @@ from typing import List, Optional
 
 load_dotenv()
 
-groq_api_key = os.getenv("GROQ_API_KEY")
-
+# Removed GROQ-specific code
 
 def get_llm():
-    """Initialize and return ChatGroq LLM instance"""
-    return ChatGroq(
-        model="openai/gpt-oss-120b",
-        api_key=groq_api_key,
-        temperature=0.0,
-        max_tokens=4000,
-        max_retries=2
-    )
+    """Initialize and return ChatOpenAI LLM instance"""
+    return ChatOpenAI(model="gpt-4", temperature=0.7)  # Adjusted temperature for OpenAI
 
 
 # Pydantic models for structured output
