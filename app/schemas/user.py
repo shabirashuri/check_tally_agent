@@ -28,7 +28,6 @@ class UserLogin(BaseModel):
 
 class UserLoginResponse(BaseModel):
     """Schema for login response"""
-    user_id = str
     email: EmailStr
     username : str
     access_token: str
