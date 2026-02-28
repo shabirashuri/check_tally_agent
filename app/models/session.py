@@ -15,6 +15,6 @@ class Session(Base):
 
     user = relationship("User", back_populates="sessions")
 
-    company_expenses = relationship("CompanyExpense", back_populates="session")
-    bank_transactions = relationship("BankTransaction", back_populates="session")
-    tally = relationship("TallyResult", back_populates="session", uselist=False)
+    company_expenses = relationship("CompanyExpense", back_populates="session", cascade="all, delete-orphan")
+    bank_transactions = relationship("BankTransaction", back_populates="session", cascade="all, delete-orphan")
+    tally = relationship("TallyResult", back_populates="session", uselist=False, cascade="all, delete-orphan")

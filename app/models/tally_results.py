@@ -9,7 +9,7 @@ class TallyResult(Base):
     __tablename__ = "tally_results"
 
     id = Column(Integer, primary_key=True, index=True)
-    session_id = Column(String, ForeignKey("sessions.id"), unique=True)
+    session_id = Column(String, ForeignKey("sessions.id", ondelete="CASCADE"), unique=True)
 
     cashed = Column(Text)       # JSON string
     pending = Column(Text)     # JSON string

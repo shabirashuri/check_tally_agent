@@ -147,3 +147,34 @@ def get_session(
             for bt in session_obj.bank_transactions
         ]
     )
+
+
+@router.delete("/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_session(
+    session_id: str,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a session by its ID
+
+    Args:
+        session_id: ID of the session to delete
+        current_user: Authenticated user (from JWT)
+        db: Database session
+
+    Returns:
+        HTTP 204 No Content on successful deletion
+    """
+    session = db.query(SessionModel).filter(SessionModel.id == session_id, SessionModel.user_id == current_user.get("sub")).first()
+
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Session not found"
+        )
+
+    db.delete(session)
+    db.commit()
+
+    return
