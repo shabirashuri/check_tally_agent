@@ -105,7 +105,6 @@ def login_user(
         logger.info(f"Successful login: {user_input.email}")
         
         return UserLoginResponse(
-            user_id = db_user.id,
             email=db_user.email,
             username= db_user.username,
             access_token=token,
